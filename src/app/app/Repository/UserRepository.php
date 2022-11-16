@@ -33,7 +33,7 @@ class UserRepository extends BaseRepository implements UserRepositoryInterface
 
     public function filter($request,array $columns = ['*'], array $relations = [])
     {
-        return $this->model->with($relations);
+        return $this->model->with($relations)->Filter($request)->get($columns);
     }
 
 }

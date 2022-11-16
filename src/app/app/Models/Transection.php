@@ -4,10 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Traits\TransectionFilter;
 
 class Transection extends Model
 {
-    use HasFactory;
+    use TransectionFilter, HasFactory;
     protected $fillable = [
         'id','paidAmount','currency','parentEmail','statusCode','paymentDate','parentIdentification'
     ];

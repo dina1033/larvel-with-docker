@@ -18,35 +18,29 @@ class TransectionService extends BaseService implements TransectionServiceInterf
     }
     function store(array $data)
     {
-        try{
-            $transections = json_decode(file_get_contents($data['file']), true);
-            foreach($transections['transactions'] as $transection){
-                $validator = Validator::make($transection, [
-                    'paidAmount'                      => 'required',
-                    'Currency'                        => 'required|string',
-                    'parentEmail'                     => 'required',
-                    'statusCode'                      => 'required',
-                    'paymentDate'                     => 'required',
-                    'parentIdentification'            => 'required',
-                ]);
+        $transections = json_decode(file_get_contents($data['file']), true);
+        foreach($transections['transactions'] as $transection){
+            $validator = Validator::make($transection, [
+                'paidAmount'                      => 'required',
+                'Currency'                        => 'required|string',
+                'parentEmail'                     => 'required',
+                'statusCode'                      => 'required',
+                'paymentDate'                     => 'required',
+                'parentIdentification'            => 'required',
+            ]);
 
-                if ($validator->fails()) {
-                    return response()->json(['message'=>'please check the data you enterd and not dublicate email'],422);
-                }else{
-                    $transection_data = [
-                        "paidAmount"                => $transection['paidAmount'],
-                        "currency"                  => $transection['Currency'],
-                        "parentEmail"               => $transection['parentEmail'],
-                        "statusCode"                => $transection['statusCode'],
-                        "created_at"                => $transection['paymentDate'],
-                        "parentIdentification"      => $transection['parentIdentification']
-                    ];
-                    $this->repo->create($transection_data);
-                }
+            if ($validator->fails()) {
+                return response()->json(['message'=>'please check the data you enterd and not dublicate email'],422);
             }
-            return $this->success('data saved successfully',200);
-        }catch(Throwable $e){
-            return $this->failure('something went wrong try again later',500);
+            $transection_data = [
+                "paidAmount"                => $transection['paidAmount'],
+                "currency"                  => $transection['Currency'],
+                "parentEmail"               => $transection['parentEmail'],
+                "statusCode"                => $transection['statusCode'],
+                "created_at"                => $transection['paymentDate'],
+                "parentIdentification"      => $transection['parentIdentification']
+            ];
+            $this->repo->create($transection_data);
         }
     }
 }

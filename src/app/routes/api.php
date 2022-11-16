@@ -1,7 +1,7 @@
 <?php
 
-use App\Http\Controllers\api\TransectionController;
-use App\Http\Controllers\api\UserController;
+use App\Http\Controllers\Api\TransectionController;
+use App\Http\Controllers\Api\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -19,8 +19,8 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
-Route::group(['middleware' => 'api.key'],function (){
-    Route::get('all-users',[UserController::class,'getUsers']);
-    Route::post('add-user',[UserController::class,'addUsers']);
-    Route::post('add-transection',[TransectionController::class,'addTransections']);
+Route::group(['middleware' => 'checkHashedKey'],function (){
+    Route::get('users',[UserController::class,'getUsers']);
+    Route::post('users',[UserController::class,'addUsers']);
+    Route::post('transections',[TransectionController::class,'addTransections']);
 });

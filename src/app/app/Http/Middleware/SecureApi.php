@@ -16,14 +16,15 @@ class SecureApi
      */
     public function handle(Request $request, Closure $next)
     {
-        if($request->header('Key')){
-            $key = base64_decode(substr( $request->header('Key'),3,-4));
-            if($key == 'privateapi'){
-                return $next($request);
-            }else
-                return response(['message'=>'Sorry this is a private api you can\'t use it'],403);
+        if(!$request->header('x-api-key')){
+            return response(['message'=>'Sorry you can\'t use this api'],403);
+        }
+        $key = base64_decode(substr( $request->header('x-api-key'),3,-4));
+        if($key == 'privateapi'){
+            return $next($request);
         }else
-            return response(['message'=>'Sorry this is a private api you can\'t use it'],403);
+            return response(['message'=>'Sorry you can\'t use this api'],403);
+            
 
     }
 }

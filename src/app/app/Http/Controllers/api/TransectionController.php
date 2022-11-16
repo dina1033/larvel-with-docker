@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\api;
+namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\api\TransectionRequest;
@@ -17,6 +17,12 @@ class TransectionController extends Controller
 
 
     public function addTransections(TransectionRequest $request){
-        return $this->transectionService->store($request->all());
+        try{
+            $this->transectionService->store($request->all());
+            return $this->success('data saved successfully',200);
+        }catch(Throwable $e){
+            return $this->failure('something went wrong try again later',500);
+        }
+        
     }
 }

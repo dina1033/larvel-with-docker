@@ -1,15 +1,15 @@
 <?php
 
-namespace App\Http\Controllers\api;
+namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\ApiController;
 use App\Http\Requests\api\UserRequest;
 use App\Service\UserServiceInterface;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 
-class UserController extends Controller
+class UserController extends ApiController
 {
 
     private $userService;
@@ -20,14 +20,18 @@ class UserController extends Controller
 
 
     public function getUsers(Request $request){
+        
+        $users = $this->userService->filter($request,['*'],['transections']);
+        return $this->successWithData('data retrived successfully',UserResource::collection($users),200);
 
-        if($request->statuscode || $request->currency || $request->amount || $request->date)
-            return $this->userService->filter($request,['*'],['transections']);
-        else
-            return $this->userService->all(['*'],['transections']);
     }
 
     public function addUsers(UserRequest $request){
-        return $this->userService->store($request->all());
-    }
+        try{
+            $this->userService->store($request->all());
+            return $this->success('data saved successfully',200);
+        }catch(Throwable $e){
+            return $this->failure('something went wrong',500);
+        }
+    } 
 }
