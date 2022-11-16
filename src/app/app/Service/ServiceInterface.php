@@ -9,7 +9,6 @@ interface ServiceInterface
     public function destroy(int $resource_id);
     public function restore(int $resource_id);
     public function all(array $columns = ['*'], array $relations = []);
-    public function filter($request , array $columns = ['*'], array $relations = []);
     public function findById(
         int $modelId,
         array $columns = ['*'],

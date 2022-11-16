@@ -34,10 +34,6 @@ class BaseService implements ServiceInterface
     {
         return $this->repo->all($columns, $relations);
     }
-    public function filter($request , array $columns = ['*'], array $relations = [])
-    {
-        return $this->repo->filter($request ,$columns, $relations);
-    }
     public function findById(
         int $resource_id,
         array $columns = ['*'],

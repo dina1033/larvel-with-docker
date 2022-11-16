@@ -33,11 +33,6 @@ class BaseRepository implements EloquentRepositoryInterface
         return $this->model->with($relations)->get($columns);
     }
 
-    public function filter($request, array $columns = ['*'], array $relations = []): Collection
-    {
-        return $this->model->with($relations)->get($columns);
-    }
-
     /**
      * Get all trashed models.
      *

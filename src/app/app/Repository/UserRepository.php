@@ -31,36 +31,9 @@ class UserRepository extends BaseRepository implements UserRepositoryInterface
     }
 
 
-    public function filter($request,array $columns = ['*'], array $relations = []): Collection
+    public function filter($request,array $columns = ['*'], array $relations = [])
     {
-        if(in_array('transections',$relations))
-        {
-            return $this->model->whereHas('transections',function($q) use($request){
-                $q->where(function($query) use($request){
-                    if($request->statuscode){
-                        $query->when($request->statuscode == 'authorized', function ($q) {
-                            return $q->where('statuscode',1);
-                        });
-                        $query->when($request->statuscode == 'decline', function ($q) {
-                            return $q->where('statuscode',2);
-                        });
-                        $query->when($request->statuscode == 'refunded', function ($q) {
-                            return $q->where('statuscode',3);
-                        });
-                    }
-                    if($request->currency){
-                        $query->where('currency',$request->currency);
-                    }
-                    if($request->amount){
-                        $query->whereBetween('paidAmount',$request->amount);
-                    }
-                    if($request->date){
-                        $query->whereBetween('created_at',$request->date);
-                    }
-                });
-            })->with('transections')
-            ->get($columns);
-        }
+        return $this->model->with($relations);
     }
 
 }

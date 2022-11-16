@@ -4,56 +4,49 @@ namespace App\Service;
 use App\Service\TransectionServiceInterface;
 use App\Service\BaseService;
 use App\Repository\TransectionRepositoryInterface;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Session;
-use Illuminate\Support\Facades\Http;
+use App\Traits\RespondsWithHttpStatus;
+use Illuminate\Support\Facades\Validator;
+use Throwable;
 
 class TransectionService extends BaseService implements TransectionServiceInterface
 {
+    use RespondsWithHttpStatus;
     protected $repo;
     public function __construct(TransectionRepositoryInterface $repo)
     {
         $this->repo = $repo;
     }
-
-    function all(array $columns=['*'],array $relations=[])
-    {
-        $token=Session::get('token');
-        $subscribtions = Http::withHeaders([
-                'Authorization' => 'Bearer '.$token,
-            ])->get('http://license.aictec.com/api/subscriptions');
-
-        $subscribtion_id=[];
-        foreach(json_decode($subscribtions) as $subscribtion){
-            $subscribtion_id[]=$subscribtion->id;
-        }
-        $events=$this->repo->all($columns,$relations)->whereIn('subscribtion_id',$subscribtion_id);
-        return $events;
-    }
-
     function store(array $data)
     {
-        $user=$this->sub->getSubscribtion($data['user_id']);
+        try{
+            $transections = json_decode(file_get_contents($data['file']), true);
+            foreach($transections['transactions'] as $transection){
+                $validator = Validator::make($transection, [
+                    'paidAmount'                      => 'required',
+                    'Currency'                        => 'required|string',
+                    'parentEmail'                     => 'required',
+                    'statusCode'                      => 'required',
+                    'paymentDate'                     => 'required',
+                    'parentIdentification'            => 'required',
+                ]);
 
-        $response = Http::post('http://license.aictec.com/api/login',[
-            'email' => $user->email,
-            'password' =>$user->key,
-        ]);
-        $respons_data= json_decode($response->getBody());
-        if($response->successful()){
-            $subscribtions = Http::withHeaders([
-                'Authorization' => 'Bearer '.$respons_data->token,
-            ])->get('http://license.aictec.com/api/subscription/verify',[
-                'id'=>$data['subscribtion_id'],
-            ]);
-            $subscribtion_data=json_decode($subscribtions->getBody());
-            if($subscribtion_data->message =='Valid Subscription'){
-                unset($data['user_id']);
-                return $this->repo->create($data);
-            }else{
-                return 'sorry the subscribtion is invaild';
+                if ($validator->fails()) {
+                    return response()->json(['message'=>'please check the data you enterd and not dublicate email'],422);
+                }else{
+                    $transection_data = [
+                        "paidAmount"                => $transection['paidAmount'],
+                        "currency"                  => $transection['Currency'],
+                        "parentEmail"               => $transection['parentEmail'],
+                        "statusCode"                => $transection['statusCode'],
+                        "created_at"                => $transection['paymentDate'],
+                        "parentIdentification"      => $transection['parentIdentification']
+                    ];
+                    $this->repo->create($transection_data);
+                }
             }
+            return $this->success('data saved successfully',200);
+        }catch(Throwable $e){
+            return $this->failure('something went wrong try again later',500);
         }
     }
-
 }
