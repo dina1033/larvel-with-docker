@@ -1,0 +1,51 @@
+version: '3'
+
+networks:
+  laravel:
+
+services:
+    nginx:
+        image: library/nginx:stable-alpine
+        container_name: event
+        volumes:
+            - ./src/app:/var/www/html
+            - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+        ports :
+            - "8060:80"           
+        depends_on:
+            - php
+            - mysql
+        networks :
+            - laravel
+
+    mysql:
+        image: library/mysql:5.7.22
+        container_name: mysql-event
+        restart: unless-stopped
+        ports :
+            - "3308:3306"
+        volumes:
+            - ./mysql:/var/lib/mysql
+        environment:
+            MYSQL_DATABASE: event
+            MYSQL_USER: root
+            MYSQL_PASSWORD : 
+            MYSQL_ROOT_PASSWORD: 
+            SERVICE_TAGs: dev
+            SERVICE_NAME: mysql
+        networks :
+            - laravel
+            
+    php:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        container_name: php
+        volumes:
+            - ./src/app:/var/www/html
+        ports :
+            - "9000:9000"
+        networks :
+            - laravel
+
+
