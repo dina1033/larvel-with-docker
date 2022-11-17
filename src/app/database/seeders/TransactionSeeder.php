@@ -15,7 +15,6 @@ class TransactionSeeder extends Seeder
      */
     public function run()
     {
-        Transection::truncate();
         $transections = json_decode(file_get_contents(storage_path() . "/json/transactions.json"), true);
         foreach($transections['transactions'] as $transection){
             Transection::create([

@@ -15,7 +15,6 @@ class UserSeeder extends Seeder
      */
     public function run()
     {
-        User::truncate();
         $users = json_decode(file_get_contents(storage_path() . "/json/users.json"), true);
         foreach($users['users'] as $user){
             User::create([

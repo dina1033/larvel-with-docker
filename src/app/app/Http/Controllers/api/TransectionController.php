@@ -2,12 +2,11 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\ApiController;
 use App\Http\Requests\api\TransectionRequest;
 use App\Service\TransectionServiceInterface;
-use Illuminate\Http\Request;
 
-class TransectionController extends Controller
+class TransectionController extends ApiController
 {
     private $transectionService;
     public function __construct(TransectionServiceInterface $transectionService)
@@ -23,6 +22,6 @@ class TransectionController extends Controller
         }catch(Throwable $e){
             return $this->failure('something went wrong try again later',500);
         }
-        
+
     }
 }
