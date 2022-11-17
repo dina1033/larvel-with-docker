@@ -8,6 +8,7 @@ use App\Service\UserServiceInterface;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
+use App\Http\Resources\api\UserResource;
 
 class UserController extends ApiController
 {
@@ -20,7 +21,7 @@ class UserController extends ApiController
 
 
     public function getUsers(Request $request){
-        
+
         $users = $this->userService->filter($request,['*'],['transections']);
         return $this->successWithData('data retrived successfully',UserResource::collection($users),200);
 

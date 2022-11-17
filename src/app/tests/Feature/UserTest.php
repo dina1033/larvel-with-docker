@@ -2,12 +2,15 @@
 
 namespace Tests\Feature;
 
-use Illuminate\Foundation\Testing\RefreshDatabase;
+// use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
+// use Illuminate\Foundation\Testing\DatabaseMigrations;
 
 class UserTest extends TestCase
 {
+    // use DatabaseMigrations;
+    // use RefreshDatabase;
     /**
      * A basic feature test example.
      *
@@ -15,15 +18,15 @@ class UserTest extends TestCase
      */
     public function test_all_users_route()
     {
-        $response = $this->get('/api/all-users',['Key' => 'pricHJpdmF0ZWFwaQ==vate']);
+        $response = $this->get('/api/users',['x-api-key' => 'pricHJpdmF0ZWFwaQ==vate']);
 
         $response->assertStatus(200);
     }
 
     public function test_add_users_from_file_json_route()
     {
-        $response = $this->withHeaders(['Key' => 'pricHJpdmF0ZWFwaQ==vate'])
-        ->post('/api/add-user',[
+        $response = $this->withHeaders(['x-api-key' => 'pricHJpdmF0ZWFwaQ==vate'])
+        ->post('/api/users',[
             'file' => storage_path("/json/users.json")
         ]);
 
